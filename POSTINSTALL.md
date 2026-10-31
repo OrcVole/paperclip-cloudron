@@ -24,7 +24,7 @@ after that, sign-up is **closed automatically**, so a stranger who reaches this 
 **After you have claimed the instance, restart the app once** (Cloudron dashboard, Restart). Until that restart sign-up is still
 open. Existing users keep signing in either way.
 
-To add more people: open a Web Terminal, set `PAPERCLIP_AUTH_DISABLE_SIGN_UP=false` in `/app/data/env`, restart the app, have them
+To add more people: open a Web Terminal, run `umask 077`, set `PAPERCLIP_AUTH_DISABLE_SIGN_UP=false` in `/app/data/env`, restart the app, have them
 sign up, then set it back to `true` (or remove the line) and restart. An explicit value in that file always wins over the automatic
 setting. The file is read line by line (`NAME=value`, only `PAPERCLIP_*` names, plain values); it is never executed.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+[1.0.1]
+
+- The operator settings file `/app/data/env` is made readable by root only at every start. A file created in the Web
+  Terminal was readable by the agent user, and some `PAPERCLIP_*` settings are secrets.
+
 [1.0.0]
 
 - First release. Paperclip 2026.1023.0 (upstream release v2026.1023.0, 2026-10-24), built from source

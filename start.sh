@@ -95,6 +95,9 @@ chown cloudron:cloudron "${SECRETS}"/*; chmod 0600 "${SECRETS}"/*
 # The operator's file is PARSED, never sourced. This script runs as root and /app/data is writable by the server user, so
 # sourcing the file would turn anything that compromises the server into root (inside the container) at the next start.
 # Only PAPERCLIP_* settings with a plain value pass; the settings an operator may not override are forced further down.
+# The agent user can traverse /app/data, and a file made in the Web Terminal is 0644, so it could read this one, and some
+# PAPERCLIP_* settings are secrets (measured 2026-10-31). Root only, at every start.
+[[ -f "${ENV_FILE}" ]] && { chown root:root "${ENV_FILE}"; chmod 0600 "${ENV_FILE}"; }
 if [[ -f "${ENV_FILE}" ]]; then
   log "reading operator overrides from ${ENV_FILE} (parsed, not sourced)"
   while IFS= read -r line || [[ -n "${line}" ]]; do
