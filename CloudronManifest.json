@@ -1,0 +1,57 @@
+{
+  "id": "io.github.orcvole.paperclip",
+  "title": "Paperclip",
+  "author": "OrcVole",
+  "packagerName": "OrcVole",
+  "packagerUrl": "https://github.com/OrcVole/paperclip-cloudron",
+  "contactEmail": "Most+github@OrcadianVole.com",
+  "version": "1.0.0",
+  "upstreamVersion": "2026.1023.0",
+  "manifestVersion": 2,
+  "minBoxVersion": "10.0.0",
+  "website": "https://github.com/paperclipai/paperclip",
+  "dockerImage": "ghcr.io/orcvole/paperclip-cloudron@sha256:e5fa14c8a4b8401a309d689888a11d4ef3e06c6c6efb0c844fd84c535c509b98",
+  "tagline": "Control plane for teams of AI agents",
+  "description": "file://DESCRIPTION.md",
+  "changelog": "file://CHANGELOG.md",
+  "icon": "file://logo.png",
+  "iconUrl": "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/logo.png",
+  "postInstallMessage": "file://POSTINSTALL.md",
+  "httpPort": 3100,
+  "healthCheckPath": "/api/health",
+  "configurePath": "/",
+  "memoryLimit": 4294967296,
+  "capabilities": [
+    "net_admin"
+  ],
+  "addons": {
+    "postgresql": {},
+    "localstorage": {}
+  },
+  "persistentDirs": [
+    "/app/workspaces"
+  ],
+  "optionalSso": false,
+  "checklist": {
+    "first-admin-invite": {
+      "message": "Read the app's Logs for a one-time first-admin invite link (also saved at /app/data/.secrets/first-admin-invite). Treat it as a password: whoever opens it first becomes the instance administrator. It expires after 72 hours. After you have claimed the instance, restart the app once to close sign-up."
+    },
+    "sign-up": {
+      "message": "Sign-up is open until the first admin has claimed this instance, and is closed automatically at the next start after that. Claim the instance, then restart the app once. To add people later, see the POSTINSTALL notes."
+    },
+    "workspaces-not-backed-up": {
+      "message": "Agent workspaces (git checkouts of your project repositories) are excluded from this app's backups, because they are large and change constantly. Anything an agent has not committed and pushed is not backed up."
+    }
+  },
+  "tags": [
+    "ai",
+    "agents",
+    "automation",
+    "orchestration",
+    "productivity"
+  ],
+  "mediaLinks": [
+    "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/screenshots/dashboard.png",
+    "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/screenshots/workspace-changes.png"
+  ]
+}

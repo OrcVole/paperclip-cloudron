@@ -1,0 +1,4 @@
+# ADR 0002. The Paperclip server (cloudron) may run the agent launcher as pcagent, keeping its
+# environment (the launcher applies the denylist), and nothing else. Installed at /etc/sudoers.d/paperclip, 0440.
+Defaults:cloudron !lecture, !use_pty
+cloudron ALL=(pcagent) NOPASSWD:SETENV: /app/pkg/agent-launch.sh *

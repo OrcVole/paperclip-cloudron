@@ -1,0 +1,3 @@
+#!/bin/sh
+# ADR 0002: every opencode run goes through the agent wrapper, then the one sudoers rule, to pcagent.
+exec /app/pkg/agent-wrapper.sh opencode "$@"

@@ -1,0 +1,67 @@
+{
+    "stable": true,
+    "versions": {
+        "1.0.0": {
+            "manifest": {
+                "id": "io.github.orcvole.paperclip",
+                "title": "Paperclip",
+                "author": "OrcVole",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/paperclip-cloudron",
+                "contactEmail": "Most+github@OrcadianVole.com",
+                "version": "1.0.0",
+                "upstreamVersion": "2026.1023.0",
+                "manifestVersion": 2,
+                "minBoxVersion": "10.0.0",
+                "website": "https://github.com/paperclipai/paperclip",
+                "dockerImage": "ghcr.io/orcvole/paperclip-cloudron@sha256:e5fa14c8a4b8401a309d689888a11d4ef3e06c6c6efb0c844fd84c535c509b98",
+                "tagline": "Control plane for teams of AI agents",
+                "description": "<upstream>2026.1023.0</upstream>\n\n# Paperclip\n\nPaperclip is an open-source control plane for teams of AI agents. Define a company with a goal,\nhire agents into an org chart (Claude Code, Codex, OpenCode, or an HTTP or gateway agent), give\nthem budgets and approval gates, and they wake on a schedule to check out tickets, do the work,\nand report back. Tickets, routines, cost tracking and an audit log are built in.\n\n**How coding agents are contained.** Agents that run inside this app (Claude Code, Codex, OpenCode)\nrun as a separate, unprivileged user, never as the app's own server user. They cannot read Paperclip's\ndatabase credentials or its encryption key, they cannot reach other apps or databases on your server's\ninternal network, and they cannot send mail. They can reach the internet, their own workspace, and\nPaperclip's own API with their own permissions. This holds however Paperclip runs an agent, including\nits ACP engine, which bundles its own copy of each agent binary: every one is routed back through the\ncontained path.\n\n**What it does not protect against.** Agents of one company share a single user, so one can read\nanother's workspace and saved logins. An agent can fill the server's disk. Anyone you give board\naccess can run any command inside the app, so grant it only to people you trust. **For work on\nuntrusted input** — pull requests from strangers, public tickets — run agents in a remote sandbox or a\nseparate app rather than inside this one. The design and its limits are in the package's\n`docs/decisions/0002-agent-containment.md`.\n\nThis package only supports email and password sign-in. There is no single sign-on, and there is no\npassword reset by email; account recovery needs an administrator with access to the app's\ndatabase.\n\nAgent workspaces (checkouts of your project repositories) are excluded from Cloudron's backup,\nbecause they are large, change continuously, and are rebuilt from your repositories on demand.\nAnything an agent has not committed and pushed is not backed up. See POSTINSTALL for what this\nmeans in practice.\n\nThis package includes software developed by the Paperclip AI project, licensed MIT. It is a\ncommunity package, not affiliated with or officially supported by the Paperclip project.\n",
+                "changelog": "- First release. Paperclip 2026.1023.0 (upstream release v2026.1023.0, 2026-10-24), built from source\n  on `cloudron/base:6.0.1` with Node.js 24.22.1 (security release).\n- Sign-up is open only until the first admin has claimed the instance, and is closed automatically at the next start after\n  that. Restart the app once after claiming it. An explicit `PAPERCLIP_AUTH_DISABLE_SIGN_UP` in `/app/data/env` wins.\n- The operator's `/app/data/env` file is read line by line and never executed.\n- Local coding agents (Claude Code, Codex, OpenCode) run as a separate, unprivileged user, reached\n  only through a wrapper that firewalls their outbound network and strips server secrets from their\n  environment. This holds for Paperclip's ACP engine too (its bundled agent binaries are routed back\n  through the wrapper). See the package `docs/decisions/0002-agent-containment.md` for what this does and does\n  not protect against.\n- Agent workspaces are kept outside Cloudron's backup, because they are large, change constantly,\n  and are git checkouts that Paperclip rebuilds from your repositories. Anything an agent has not\n  committed and pushed is not backed up.\n- No single sign-on: Paperclip supports email and password sign-in only. There is no password reset\n  by email; recovery needs an administrator.\n",
+                "icon": "file://logo.png",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/logo.png",
+                "postInstallMessage": "## First deployment takes a while\n\nThis is a large image (several gigabytes: it bundles the coding-agent CLIs). The **first** install or\nupdate spends several minutes downloading and unpacking before the app starts; this is normal, and it\nis only slow the first time. Later restarts are quick.\n\n## First admin\n\nRead the app's Logs tab for a one-time invite link, printed at first start. It is also saved at\n`/app/data/.secrets/first-admin-invite` (Web Terminal: `cat /app/data/.secrets/first-admin-invite`).\n\nTreat this link as a password: whoever opens it first becomes the instance administrator. It\nexpires after 72 hours. If it expires before anyone claims it, open a Web Terminal and run:\n\n```bash\npaperclipai auth bootstrap-ceo --force\n```\n\n## Sign-up\n\nSign-up is **open until the first admin has claimed the instance**, because claiming it needs an account. From the next start\nafter that, sign-up is **closed automatically**, so a stranger who reaches this app's URL cannot create an account.\n\n**After you have claimed the instance, restart the app once** (Cloudron dashboard, Restart). Until that restart sign-up is still\nopen. Existing users keep signing in either way.\n\nTo add more people: open a Web Terminal, set `PAPERCLIP_AUTH_DISABLE_SIGN_UP=false` in `/app/data/env`, restart the app, have them\nsign up, then set it back to `true` (or remove the line) and restart. An explicit value in that file always wins over the automatic\nsetting. The file is read line by line (`NAME=value`, only `PAPERCLIP_*` names, plain values); it is never executed.\n\n## Agent workspaces are not backed up\n\nAgents work in checkouts of your project repositories, kept outside Cloudron's backup because they\nare large and change constantly. The durable copy of an agent's work is its git repository:\nanything committed and pushed survives a restore or a clone; anything left uncommitted does not.\nHave agents push their work as they go, particularly before a planned update or restore.\n\n## What an agent running inside this app can reach\n\nSee the app's description for the summary. In short: agents run as a separate, unprivileged user;\nthey cannot read Paperclip's secrets or reach your other apps and databases; they can reach the\ninternet, their own workspace and Paperclip's API. Agents of one company share a user, so keep\nuntrusted-input work (public tickets, strangers' pull requests) in a remote sandbox or a separate\napp. Full detail: `docs/decisions/0002-agent-containment.md` in the package repository.\n\n## Connecting an agent to a model\n\n**API key (Claude, OpenAI, or any OpenAI-compatible endpoint):** add it when you configure the agent\nin the Paperclip UI. Keys you set there are stored by Paperclip, encrypted, and handed only to that\nagent's run.\n\n**Claude or ChatGPT subscription:** the onboarding wizard's \"use subscription\" button does **not**\nsign you in by itself. Do it from a Web Terminal: run `claude` (or `codex`), then `/login`, follow\nthe prompt, and `/exit`. The login is saved under `/app/data/agent-home`, readable only by the agent\nuser, and it is included in this app's backups, so it survives an update, a restore and a clone.\n\n**Agents hiring agents.** An agent can build its own team: it can hire other agents (name, role,\nadapter, model), which is a supported flow. **By default a new agent needs no board sign-off**, so an agent team can\ngrow itself unattended; if you want a human to approve each new hire, turn on \"require board approval\nfor new agents\" for the company. See the trust notes in the app description.\n\n**Local or self-hosted models** (for example a vLLM or Ollama endpoint on your network, or a gateway):\ngive the agent an OpenAI-compatible base URL and key in its configuration. Because agents are\nfirewalled off your server's internal network, an endpoint on another Cloudron app is reached through\nits public URL, not its internal address.\n\n## How much memory to give it\n\nThe app idles at about 1.3 GiB. Each agent running at the same time adds roughly 0.5 GiB. The default\n4 GiB limit comfortably holds the app plus about four concurrent agents; raise the memory limit in the\napp's settings if you expect more agents working at once.\n\n## Backups and restores\n\nRestoring a backup rolls the whole app back to that point: your agents, tickets, settings and saved\nlogins return to how they were, and anything created since is gone. **Agent workspaces are the\nexception** — they live outside the backup (see \"Agent workspaces are not backed up\" above), so a restore does not touch them. Have agents\ncommit and push their work before a planned restore.\n",
+                "httpPort": 3100,
+                "healthCheckPath": "/api/health",
+                "configurePath": "/",
+                "memoryLimit": 4294967296,
+                "capabilities": [
+                    "net_admin"
+                ],
+                "addons": {
+                    "postgresql": {},
+                    "localstorage": {}
+                },
+                "persistentDirs": [
+                    "/app/workspaces"
+                ],
+                "optionalSso": false,
+                "checklist": {
+                    "first-admin-invite": {
+                        "message": "Read the app's Logs for a one-time first-admin invite link (also saved at /app/data/.secrets/first-admin-invite). Treat it as a password: whoever opens it first becomes the instance administrator. It expires after 72 hours. After you have claimed the instance, restart the app once to close sign-up."
+                    },
+                    "sign-up": {
+                        "message": "Sign-up is open until the first admin has claimed this instance, and is closed automatically at the next start after that. Claim the instance, then restart the app once. To add people later, see the POSTINSTALL notes."
+                    },
+                    "workspaces-not-backed-up": {
+                        "message": "Agent workspaces (git checkouts of your project repositories) are excluded from this app's backups, because they are large and change constantly. Anything an agent has not committed and pushed is not backed up."
+                    }
+                },
+                "tags": [
+                    "ai",
+                    "agents",
+                    "automation",
+                    "orchestration",
+                    "productivity"
+                ],
+                "mediaLinks": [
+                    "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/screenshots/dashboard.png",
+                    "https://raw.githubusercontent.com/OrcVole/paperclip-cloudron/main/screenshots/workspace-changes.png"
+                ]
+            },
+            "creationDate": "Sat, 31 Oct 2026 17:10:38 GMT",
+            "ts": 1793466638000,
+            "publishState": "published"
+        }
+    }
+}
